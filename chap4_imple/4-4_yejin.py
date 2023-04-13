@@ -1,61 +1,53 @@
-# N, MÀ» °ø¹éÀ¸·Î ±¸ºĞÇÏ¿© ÀÔ·Â¹Ş±â
 n, m = map(int, input().split())
-
-# ¹æ¹®ÇÑ À§Ä¡¸¦ ÀúÀåÇÏ±â À§ÇÑ ¸ÊÀ» »ı¼ºÇÏ¿© 0À¸·Î ÃÊ±âÈ­
-d[n][m] = [[m]*0 for _ in range(n)]
-# ÇöÀç Ä³¸¯ÅÍÀÇ X ÁÂÇ¥, Y ÁÂÇ¥, ¹æÇâÀ» ÀÔ·Â¹Ş±â
 x, y, direction = map(int, input().split())
-d[x][y] = 1 # ÇöÀç ÁÂÇ¥ ¹æ¹® Ã³¸®
 
-# ÀüÃ¼ ¸Ê Á¤º¸¸¦ ÀÔ·Â¹Ş±â
 array = []
-
 for i in range(n):
-    array.append(list(map(int, input().split()))) 
-    
-# ºÏ, µ¿, ³², ¼­ ¹æÇâ Á¤ÀÇ
-dx = [-1, 0, 1, 0]
-dy = [0, 1, 0, -1]
+    array.append(list(map(int, input().split())))
 
-# ¿ŞÂÊÀ¸·Î È¸Àü
+d = [[0]*m for _ in range(n)]
+d[x][y]=1
+# ë¶:0 --> ì„œ:3 --> ë‚¨:2 --> ë™:1
 def turn_left():
     global direction
     direction -= 1
     
-    if direction == -1
+    if direction == -1:
         direction = 3
 
-# ½Ã¹Ä·¹ÀÌ¼Ç ½ÃÀÛ    
-count = 1
-turn_time = 0
+answer = 0
 
+# 0:ìœ¡ì§€, 1: ë°”ë‹¤
+
+# 0,1,2,3 --> ë¶,ë™,ë‚¨,ì„œ
+dx=[-1,0,1,0]
+dy=[0,1,0,-1]
+
+move_count = 0
 while True:
     turn_left()
+    # ê°€ë³´ì§€ ì•Šì•˜ê³ , ìœ¡ì§€ì´ë©´ ì „ì§„
     nx = x + dx[direction]
     ny = y + dy[direction]
-    
-    # È¸ÀüÇÑ ÀÌÈÄ Á¤¸é¿¡ °¡º¸Áö ¾ÊÀº Ä­ÀÌ Á¸ÀçÇÏ´Â °æ¿ì
-    if array[nx][ny] == 0 and d[nx][ny] == 0:
+    if d[nx][ny] == 0 and array[nx][ny] == 0:
+        d[nx][ny] = 1
         x = nx
         y = ny
-        count += 1
-        turn_time = 0
+        move_count = 0
+        answer += 1
         continue
-    else:
-        turn_time += 1
-    
-    
-    if turn_time == 4:
-        # µÚ·Î °¡¾ßÇÔ
+    else :
+        move_count += 1
+        
+    if move_count == 4:
         nx = x - dx[direction]
-        ny = y - dy[direction]
-        # µÚ·Î °¥ ¼ö ÀÖ´Ù¸é
-        if d[nx][ny] == 0:
+        ny = y - dx[direction]
+        if array[nx][ny] == 1: # ë’¤ê°€ ë°”ë‹¤ì´ë©´ ë©ˆì¶¤
+            break
+        elif d[nx][ny] == 0: # ë’¤ê°€ ìœ¡ì§€ì´ê³  ê°€ë³´ì§€ ì•Šì•˜ë”ë¼ë©´ 
             x = nx
             y = ny
-        # µÚ°¡ ¸·Çô ÀÖ´Ù¸é
-        else:
-            break
-        turn_time = 0
-print(count)
-            
+            move_count = 0
+            answer += 1
+                
+print(answer)
