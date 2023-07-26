@@ -62,7 +62,6 @@ int main(void) {
             if (arr[nx][ny] == 0) {
                 x = nx;
                 y = ny;
-                cnt++;
             }
             // 뒤가 바다로 막혀있는 경우
             else break;

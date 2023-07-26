@@ -1,45 +1,21 @@
-# N, M, K¸¦ °ø¹éÀ¸·Î ±¸ºĞÇÏ¿© ÀÔ·Â¹Ş±â
-n, m, k = map(int, input().split())
-# N °³ÀÇ ¼ö¸¦ °ø¹éÀ¸·Î ±¸ºĞÇÏ¿© ÀÔ·Â¹Ş±â
-data = list(map(int, input().split()))
+'''
+date: 2023.06.28
+name: yejin
+title: í° ìˆ˜ì˜ ë²•ì¹™
+'''
+n, m, k = map(int, input().split()) # ë°°ì—´ í¬ê¸°, ìˆ«ì ë”í•´ì§€ëŠ” íšŸìˆ˜, ì—°ì†í•´ì„œ ë”í•´ì§ˆ ìˆ˜ ìˆëŠ” ê°œ
+numbers = list(map(int, input().split()))
 
-data.sort() # ÀÔ·Â¹ŞÀº ¼öµé Á¤·ÄÇÏ±â
-first = data[n-1] # °¡Àå Å« ¼ö
-second = data[n-2] # µÎ ¹øÂ°·Î Å« ¼ö
+numbers.sort(reverse=True) # ë‚´ë¦¼ì°¨ìˆœ ì •ì¹™
 
-result = 0
-
-while True:
-    for i in range(k): # °¡Àå Å« ¼ö¸¦ k¹ø ´õÇÏ±â
-        if m == 0: # mÀÌ 0ÀÌ¶ó¸é ¹İº¹¹® Å»Ãâ
+answer = 0
+# ì´ m ë²ˆ ë”í•˜ëŠ”ë°, ê°€ì¥ í° ìˆ˜ë¥¼ kë²ˆ/ë‘ë²ˆì§¸ í° ìˆ˜ë¥¼ 1ë²ˆ ë”í•˜ë©´ì„œ ë°˜ë³µ
+while m != 0:
+    for j in range(k):
+        answer += numbers[0]
+        if m == 0:
             break
-        result += first
-        m -= 1 # ´õÇÒ ¶§¸¶´Ù 1¾¿ •û±â
-        
-    if m == 0: # mÀÌ 0ÀÌ¶ó¸é ¹İº¹¹® Å»Ãâ
-        break
-    reuslt += second # µÎ ¹øÂ°·Î Å« ¼ö¸¦ ÇÑ ¹ø ´õÇÏ±â
-    m -= 1 # ´õÇÒ ¶§¸¶´Ù 1¾¿ »©±â
-
-print(result) # ÃÖÁ¾ ´ä¾È Ãâ·Â
-
-###############################################3
-#### ¹İº¹µÇ´Â ¼ö¿­·Î ´õÇÏ±â ####
-# N, M, K¸¦ °ø¹éÀ¸·Î ±¸ºĞÇÏ¿© ÀÔ·Â¹Ş±â
-n, m, k = map(int, input().split())
-# n °³ÀÇ ¼ö¸¦ °ø¹éÀ¸·Î ±¸ºĞÇÏ¿© ÀÔ·Â¹Ş±â
-data = list(map(int, input().split()))
-
-data.sort() # ÀÔ·Â¹ŞÀº ¼ö Á¤·Ä
-first = data[n-1] # °¡Àå Å« ¼ö
-second = data[n-2] # µÎ ¹øÂ°·Î Å« ¼ö
-
-# °¡Àå Å« ¼ö°¡ ´õÇØÁö´Â È½¼ö °è»ê
-count = int(m/(k+1)) * k
-count += m % (k+1)
-
-result = 0
-result += (count) * first # Ã¹ ¹øÂ°·Î Å« ¼ö ´õÇÏ±â
-result += (m-count) * second # µÎ ¹øÂ°·Î Å« ¼ö ´õÇÏ±â
-
-print(result)
+        m -= 1
+    answer += numbers[1]
+    m -= 1
+print(answer)
