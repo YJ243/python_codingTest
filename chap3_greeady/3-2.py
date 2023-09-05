@@ -4,7 +4,7 @@ name: yejin
 title: 큰 수의 법칙
 '''
 n, m, k = map(int, input().split()) # 배열 크기, 숫자 더해지는 횟수, 연속해서 더해질 수 있는 개
-numbers = list(map(int, input().split()))
+numbers = list(map(int, input().split())
 
 numbers.sort(reverse=True) # 내림차순 정칙
 

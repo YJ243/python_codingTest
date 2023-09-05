@@ -1,7 +1,7 @@
 '''
 date: 2023.07.26
 name: Yejin
-title: file_answer
+title: can't make
 '''
 from itertools import combinations 
 n = int(input())

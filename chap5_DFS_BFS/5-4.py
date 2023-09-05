@@ -1,8 +1,14 @@
-def recursive_function():
+'''
+date: 2023.09.04
+name: Yejin
+title: recursive condition
+'''
+def recursive_function(i):
+    # 100ë²ˆì§¸ ì¶œë ¥í–ˆì„ ë•Œ ì¢…ë£Œë˜ë„ë¡ ì¡°ê±´ ëª…ì‹œ
     if i == 100:
         return
-    print(i, '¹øÂ° Àç±Í ÇÔ¼ö¿¡¼­', i+1, '¹øÂ° Àç±Í ÇÔ¼ö¸¦ È£Ãâ')
+    print(i, 'ë²ˆì§¸ ì¬ê·€ í•¨ìˆ˜ì—ì„œ', i+1, 'ë²ˆì§¸ ì¬ê·€ í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•©ë‹ˆë‹¤')
     recursive_function(i+1)
-    print(i, '¹øÂ° Àç±Í ÇÔ¼ö¸¦ Á¾·áÇÕ´Ï´Ù.')
-
+    print(i, 'ë²ˆì§¸ ì¬ê·€ í•¨ìˆ˜ë¥¼ ì¢…ë£Œí•©ë‹ˆë‹¤')
+    
 recursive_function(1)

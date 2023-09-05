@@ -1,5 +1,5 @@
 '''
-date: 2023.07.25
+date: 2023.07.26
 name: Yejin
 title: flip
 '''
@@ -38,5 +38,3 @@ for i in range(1, len(data)):
 
 # 둘 중 적은 걸로 답
 print(min(first, second))
-print(first)
-print(second)

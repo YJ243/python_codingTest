@@ -12,5 +12,5 @@ for i in range(n+1): # 시
             if k // 10 == 3 or k % 3 == 0:
                 s += 1
 
-answer = i * j * s
+#answer = i * j * s
 print(answer)
