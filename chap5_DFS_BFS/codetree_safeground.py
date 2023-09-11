@@ -116,7 +116,7 @@ def dfs(x,y,k):
             dfs(new_x, new_y, k)
 zone_num = 0
 def get_zone_num(k):
-    global 
+    global zone_num
     
     # 새로운 탐색을 시작한다는 의미로 zone_num를 0으로 갱신하고
     # visited 배열을 초기화해줌

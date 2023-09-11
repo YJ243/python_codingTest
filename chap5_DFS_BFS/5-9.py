@@ -10,27 +10,29 @@ title: BFS
 
 '''
 특정 조건에서의 최단 경로 문제를 해결하기 위한 목적으로도 효과적으로 사용될 수 있음
+--> 각 간선의 비용이 동일한 경우에서 최단 경로 문제를 해결하기 위한 목적으로도 사용됨
+
 '''
 from collections import deque
 
 # BFS 메서드 정의
 def bfs(start):
-    # 큐 구현을 위해 deque 라이브러리 사용
+    # Queue 구현을 위해 deque 라이브러리 이용
     queue = deque([start])
     # 현재 노드를 방문 처리
     visited[start] = True
+    
     # 큐가 빌 때까지 반복
     while queue:
-        # 큐에서 원소를 하나 뽑아 출력
+        # 큐에서 하나의 원소를 뽑아서 출력
         v = queue.popleft()
         print(v, end=' ')
-        
         # 해당 원소와 연결된, 아직 방문하지 않은 원소들을 큐에 삽입
         for i in graph[v]:
             if not visited[i]:
                 queue.append(i)
                 visited[i]=True
-    
+
 # 각 노드가 연결된 정보를 리스트 자료형으로 표현(2차원 리스트)
 graph = [
     [],
@@ -49,7 +51,6 @@ visited = [False] * 9
 
 # 정의된 BFS 함수 호출
 bfs(1)
-
 '''
 탐색순서: 시작 노드 1로부터 거리가 1인 노드 --> 거리가 2인 노드 --> 거리가 3인 노드
 '''
