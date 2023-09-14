@@ -163,3 +163,140 @@ while sum(map(sum,graph)) > 0 : # 빙하가 완전히 녹을 떄까지 (합이 0
     time += 1 # 시간 증가
 
 print(time, melt_cnt)
+
+## 해설
+'''
+빙하가 녹을 조건: 인접한 곳에 빙하에 둘러싸여 있지 않은 물이 있는 경우
+(0,0)을 시작점으로 BFS 돌리면 빙하에 둘러싸이지 않은 물의 영역 구할 수 있음
+'''
+
+from collections import deque
+import enum
+
+class Element(enum.Enum):
+    WATER = 0
+    GLACIER = 1
+    
+
+# 변수 선언 및 입력
+n, m = tuple(map(int, input().split()))
+
+a = [
+    list(map(int, input().split()))
+    for _ in range(n)
+]
+
+# bfs에 필요한 변수들
+q = deque()
+glaciers_to_melt = deque()
+
+visited = [
+    [False for _ in range(m)]
+    for _ in range(n)
+]
+
+cnt = 0
+
+# 0: 오른쪽, 1: 아래쪽, 2: 왼쪽, 3: 위쪽
+dxs, dys = [0,1,0,-1], [1,0,-1,0]
+
+# 소요 시간과 가장 마지막으로 녹은 빙하의 수를 저장
+elapsed_time = 0
+last_melt_cnt = 0
+
+# 주어진 위치가 격자를 벗어나는지 여부를 반환
+def in_range(x,y):
+    return 0 <= x < n and 0 <= y < m
+
+# 범위를 벗어나지 않으면서 물이어야 하고 방문한 적이 없어야 갈 수 있음
+def can_go(x,y):
+    return in_range(x,y) and a[x][y] == Element.WATER.value and not visited[x][y]
+
+def is_glacier(x,y):
+    return in_range(x,y) and a[x][y] == Element.GLACIER.value and not visited[x][y]
+
+# visited 배열을 초기화
+def initialize():
+    for i in range(n):
+        for j in range(m):
+            visited[i][j] = False
+            
+# 빙하에 둘러싸여 있지 않은 물을 전부 구해주는 BFS
+# 문제에서 가장자리는 전부 물로 주어짐
+# 따라서 항상 (0,0)에서 시작하여 탐색을 진행하면
+# 빙하에 둘러싸여 있지 않은 물들은 전부 visited 처리가 됨
+
+def bfs():
+    # BFS 함수가 여러 번 호출되므로
+    # 사용하기 전 visited 배열을 초기화해줌
+    initialize()
+    
+    # 항상 (0,0)에서 시작
+    q.append((0,0))
+    visited[0][0] = True
+    
+    while q:
+        # queue에서 가장 먼저 들어온 원소를 뺌
+        x, y = q.popleft()
+        
+        # queue에서 뺸 원소의 위치를 기준으로 네 방향을 확인
+        for dx, dy in zip(dxs, dys):
+            new_x, new_y = x + dx, y + dy
+            
+            
+            # 더 갈 수 있는 곳이면 queue에 추가
+            if can_go(new_x, new_y):
+                q.append((new_x, new_y))
+                visited[new_x][new_y] = True
+                
+    
+# 현재 위치를 기준으로 인접한 영역에
+# 빙하에 둘러싸여 있지 않은 물이 있는지 판단
+def outside_water_exist_in_neighbor(x,y):
+    for dx, dy in zip(dxs, dys):
+        new_x, new_y = x + dx, y + dy
+        
+        if in_range(new_x, new_y) and visited[new_x][new_y]:
+            return True
+    return False
+
+
+# 인접한 영역에 빙하에 둘러싸여 있지 않은 물이 있는 빙하를 찾아 녹여줌
+def melt():
+    global last_melt_cnt
+    
+    for i in range(n):
+        for j in range(m):
+            if a[i][j] == Element.GLACIER.value and \
+                outside_water_exist_in_neighbor(i,j):
+                a[i][j] = Element.WATER.value
+                last_melt_cnt += 1
+
+# 빙하를 한 번 녹임
+def simulate():
+    global elapsed_time, last_melt_cnt
+    
+    elapsed_time += 1
+    last_melt_cnt = 0
+    
+    # 빙하에 둘러싸여 있지 않은 물의 위치를 전부 visited 로 체크
+    bfs()
+    
+    # 인접한 영역에 빙하에 둘러싸여 있지 않은 물이 있는 빙하를 찾아 녹임
+    melt()
+    
+# 빙하가 아직 남아 있는지 확인
+def glacier_exist():
+    for i in range(n):
+        for j in range(m):
+            if a[i][j] == Element.GLACIER.value:
+                return True
+    return False
+
+while True:
+    simulate()
+    
+    # 빙하가 존재하는 한 계속 빙하를 녹임
+    if not glacier_exist():
+        break
+print(elapsed_time, last_melt_cnt)
