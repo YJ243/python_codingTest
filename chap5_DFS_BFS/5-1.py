@@ -1,5 +1,5 @@
 '''
-date: 2023.08.18
+date: 2023.09.04
 name: Yejin
 title: stack
 '''
@@ -14,5 +14,6 @@ stack.append(1)
 stack.append(4)
 stack.pop()
 
-print(stack) # 최 하단 원소부터 출력
-print(stack[::-1])
+print(stack) # 최하단 원소부터 출력
+print(stack[::-1]) # 최상단 원소부터 출력
+

@@ -45,14 +45,16 @@ def bfs():
     dys = [0,1]
     
     while q:
-        x, y = q.popleft()
+        x, y = q.popleft() # 현재 방문한 위치 가져오기
         
-        for dx, dy in zip(dxs, dys):
+        # 아래 및 오른쪽 방향에 대해 탐색
+        for dx, dy in zip(dxs, dys): 
             new_x, new_y = x + dx, y + dy
             
             if can_go(new_x, new_y):
-                push(new_x, new_y)
+                # 각 위치로 이동할 수 있는지 여부 확인 후
+                push(new_x, new_y) # queue에 삽입
                 
-push(0,0)
+push(0,0) # root vertex를 queue에 삽입
 bfs()
     

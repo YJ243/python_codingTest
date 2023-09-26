@@ -200,21 +200,22 @@ def calc():
     
     return cnt
 
-
-def find_max(idx, cnt): # main 함수꼴
+# 주어진 돌 (stone_pos에 저장된 위치들) 중에서 
+# 'm'개를 선택하는 모든 경우의 수를 탐색하는 재귀 함귀 (조합으로 안하고 재귀로)
+def find_max(idx, cnt): # idx: 현재 고려 중인 돌 인덱스, cnt: 지금까지 선택한 돌 개수
     global ans
     
-    # stone_pos = [(1,1), (1,3), ...]
-    if idx == len(stone_pos): 만약 
-        if cnt == m:
-            ans = max(ans, calc())
-        return
+    # 재귀 종료 조건
+    if idx == len(stone_pos): # 만약 모든 돌을 고려했다면
+        if cnt == m: # 그리고 선택한 돌의 수가 정확히 m개라면
+            ans = max(ans, calc()) # calc로 결과 계산
+        return # 그렇지 않다면 종료
     
-    selected_stones.append(stone_pos[idx])
-    find_max(idx + 1, cnt + 1)
-    selected_stones.pop()
+    selected_stones.append(stone_pos[idx]) # 현재 위치의 돌을 선택 목록에 추가
+    find_max(idx + 1, cnt + 1) # 다음 돌을 고려해 선택한 돌의 개수 하나 늘림
+    selected_stones.pop() # 선택 목록에서 마지막에 추가한 돌 제거(선택 취소)
     
-    find_max(idx + 1, cnt)
+    find_max(idx + 1, cnt) # 다음 돌 고려해서 선택한 돌 개수 그대로 유지
     
 for _ in range(k):
     r, c = tuple(map(int, input().split()))

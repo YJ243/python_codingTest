@@ -30,7 +30,6 @@ def dfs(x, y):
         dfs(x+1, y)
         dfs(x, y-1)
         dfs(x, y+1)
-        print(x,y)
         return True
     # 현재 노드를 방문했거나 틀이 뚫려있지 않다면
     return False
