@@ -1,5 +1,5 @@
 import sys
-from collections import deque
+from collections import deqe
 INF = 10000000
 si = sys.stdin.readline
 
