@@ -24,6 +24,7 @@ date: 2023.10.12
 
 # 실수 7: if nx == attacker[0] and ny == attacker[1]: continue 여기서 bomb에 공격자 좌표가 포함되었을 때 제외 안시킴
 # 실수 8: choose_target을 choose_attacker 복사하고 고치다보니 안고친 변수들, 범위가 있음
+# 실수 9: in (-1,0,1)인데 in range(-1,0,1)라고 함 또 반복함!!!
 ##### 문제에서 나와있는 조건을 빠짐없이 보아야 한다!!!
 
 from collections import deque

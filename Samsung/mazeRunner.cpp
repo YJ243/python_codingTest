@@ -195,3 +195,66 @@ int main() {
     output();
     return 0;
 }
+
+
+
+
+
+
+
+
+
+void moveAll(){ // 모든 참가자 이동
+    int tmpMaze[NM][NM] = {0,};
+    pair<int,int> ex = exitLoc();
+        for (int i = 1; i <= N; i++) {
+        for (int j = 1; j <= N; j++) {
+            if (maze[i][j] < 0) {  // 해당 격자에 벽이나 출구가 있다면, 그대로 복사하기
+                tmpMaze[i][j] = maze[i][j];
+                
+            }
+            else if (maze[i][j] == 0) {
+                continue;
+            }
+            else{
+            int curDist = abs(i - ex.first) + abs(j - ex.second);
+            int minDist = curDist, minI, minJ;
+            for (int k = 0; k < 4; k++) {
+                int ni = i + dirs[k][0];
+                int nj = j + dirs[k][1];
+                // (i, j) => (ni, nj)
+                if (ni < 1 || nj < 1 || ni > N || nj > N) continue; // 만약 격자를 벗어나면 무효
+                if (-9 <= maze[ni][nj] && maze[ni][nj] <= -1) continue; // 만약 벽을 향한 이동이면 무효
+                int dist = abs(ni - ex.first) + abs(nj - ex.second); // 출구와 (ni, nj) 사이의 거리
+                if (minDist > dist) { // 출구까지의 거리가 "현재보다" 더 가까워졌다면, 갱신
+                    minDist = dist;
+                    minI = ni;
+                    minJ = nj;
+                }
+            }
+            // 만약 아무 곳도 갈 수가 없는 경우
+            if (minDist == curDist) {
+                tmpMaze[i][j] += maze[i][j];  // 그대로 위치가 유지
+                continue;
+            }
+            allMoved += maze[i][j]; // 참가자들이 1만큼 움직인다.
+            // 탈출에 성공하는 경우
+            if (maze[minI][minJ] == -10) {
+                continue;
+            }
+            tmpMaze[minI][minJ] += maze[i][j];  // (i, j) -> (minI, minJ)
+            }
+        }
+    }
+    
+    // 원래 격자에다가 옮기기
+    for(int i=1; i<=N; i++){
+        for(int j=1; j<=N; j++){
+            maze[i][j] = tmpMaze[i][j];
+            //cout<<maze[i][j] << ' ';
+        }
+        //cout<<'\n';
+    }
+    //cout<<'\n';
+
+}

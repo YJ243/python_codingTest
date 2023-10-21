@@ -81,3 +81,87 @@ def make_bomb(idx):    # bomb_loc[idx]자리의 주변 초토화 영역 고르�
 
 make_bomb(0)
 print(max_r)
+
+## 해설
+'''
+- 폭탄을 놓아야 하는 위치에 놓이게 될 폭탄 종류에 대해 가능한 모든 순열을 만들기
+- 그 중 폭탄에 의해 초토화 되는 영역 중 최대를 구하기
+- 각 폭탄 종류마다 영향을 미치는 위치들을 나타내는 배열을 만들기
+'''
+
+# 변수 선언 및 입력:
+n = int(input())
+bomb_type = [
+    [0 for _ in range(n)]
+    for _ in range(n)
+]
+bombed = [
+    [False for _ in range(n)]
+    for _ in range(n)
+]
+
+ans = 0
+bomb_pos = list()
+
+def in_range(x,y):
+    return 0 <= x and x < n and 0 <= y and y < n
+
+def bomb(x, y, b_type):
+    # 폭탄 종류마다 터질 위치를 미리 정의하기
+    bomb_shapes = [
+        [],
+        [[-2,0],[-1,0],[0,0],[1,0],[2,0]],
+        [[-1,0],[1,0],[0,0],[0,-1],[0,1]],
+        [[-1,-1],[-1,1],[0,0],[1,-1],[1,1]]
+    ]
+    
+    # 격자 내 칸에 대해서만 영역을 표시하기
+    for i in range(5):
+        dx, dy = bomb_shapes[b_type][i]
+        nx, ny = x + dx, y + dy
+        if in_range(nx,ny):
+            bombed[nx][ny] = True
+            
+def calc():
+    # Step1. 폭탄이 터진 위치를 표시하는 배열을 초기화
+    for i in range(n):
+        for j in range(n):
+            bombed[i][j] = False
+            
+    # Step2. 각 폭탄의 타입에 따라 초토화되는 영역을 표시
+    for i in range(n):
+        for j in range(n):
+            if bomb_type[i][j]: # 폭탄이 있는 위치
+                bomb(i,j,bomb_type[i][j]치
+    
+    # Step3. 초토화된 영역의 수를 구하기
+    cnt = 0
+    for i in range(n):
+        for j in range(n):
+            if bombed[i][j]:
+                cnt += 1
+    return cnt
+    
+def find_max_area(cnt):
+    global ans
+    
+    if cnt == len(bomb_pos):
+        ans = max(ans, calc())
+        return
+        
+    for i in range(1,4):
+        x, y = bomb_pos[cnt]
+        
+        bomb_type[x][y] = i
+        find_max_area(cnt+1)
+        bomb_type[x][y] = 0
+
+for i in range(n):
+    given_row = list(map(int, input().split()))
+    for j, bomb_place in enumerate(given_row):
+        if bomb_place:
+            bomb_pos.append((i,j))
+
+find_max_area(0)
+
+print(ans)
