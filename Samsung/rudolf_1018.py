@@ -25,13 +25,11 @@ def isFinish():
                 return False
     return True  # P명의 산타가 모두 게임에서 탈락하면 True 리턴
 
-
 def find_rudolf():
     for i in range(N):
         for j in range(N):
             if maze[i][j] == -1:
                 return (i, j)
-
 
 def correlate(s_x, s_y, moving_I, moving_J, nextI, nextJ):  # (nextI, nextJ)는 착지하는 칸
     # (s_x, s_y)부터 시작해서 (nextI, nextJ)까지 (moving_I, moving_J)방향으로 연쇄적으로 1칸씩 산타를 밀어내기
@@ -72,10 +70,8 @@ def correlate(s_x, s_y, moving_I, moving_J, nextI, nextJ):  # (nextI, nextJ)는 
         maze[s_x][s_y] = 0
         santa_loc[maze[s_x + moving_I][s_y + moving_J]] = (s_x + moving_I, s_y + moving_J)  # 위치 업데이트해주기
 
-
 def in_range(x, y):
     return 0 <= x and x < N and 0 <= y and y < N
-
 
 def bump(x, y, toI, toJ, moving_rudolf):  # 루돌프가 (x,y)로 (toI, toJ) 방향으로 왔을 때/(x,y)의 산타가 (toI,toJ)방향으로 루돌프 충돌 처리
     # bump(santa_x, santa_y, bestX, bestY, 0) # 해당 좌표와 방향을 인자로 받는 충돌함수로 보내기
@@ -126,7 +122,6 @@ def bump(x, y, toI, toJ, moving_rudolf):  # 루돌프가 (x,y)로 (toI, toJ) 방
             santa_loc[maze[nextI][nextJ]] = (nextI, nextJ)  # 좌표 업데이트
             maze[x][y] = 0
 
-
 def move_rudolf():  # 루돌프의 움직임
     rudolf_x, rudolf_y = find_rudolf()
     # Step1. 게임에서 탈락하지 않은 산타 중 가장 가까운 산타를 (r->c)이 큰 우선순위로 선택
@@ -154,7 +149,6 @@ def move_rudolf():  # 루돌프의 움직임
     maze[minI][minJ] = -1  # 옮겨간 좌표에 루돌프 표시
     maze[rudolf_x][rudolf_y] = 0  # 원래 루돌프가 있던 자리는 빈칸으로 만들기
 
-
 def move_santa(idx):  # idx번 산타를 움직임
     rudolf_x, rudolf_y = find_rudolf()  # 루돌프 위치
     santa_x, santa_y = santa_loc[idx][0], santa_loc[idx][1]  # idx번 산타 위치
@@ -179,7 +173,6 @@ def move_santa(idx):  # idx번 산타를 움직임
         maze[santa_x][santa_y] = 0  # 원래 있던 자리는 빈칸으로 만들기
         maze[bestI][bestJ] = idx  # 산타 옮기기
         santa_loc[idx] = (bestI, bestJ)  # 산타 위치 업데이트
-
 
 for turn in range(1, M + 1):  # 총 M개의 턴에 걸쳐 진행
     # Step0. 종료 조건 확인
