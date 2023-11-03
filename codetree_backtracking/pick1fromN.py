@@ -32,25 +32,23 @@ choose(1)
 ##  해설
 # 변수 선언 및 입력
 k, n = tuple(map(int, input().split()))
-selected_nums = []
+selected_num = []
 
-# 선택된 원소들을 출력해줌
+# 선택된 원소들을 출력 
 def print_permutation():
     for num in selected_nums:
-        print(num, end=" ")
+        print(num, end=' ')
     print()
-    
-def find_permutations(cnt): # 지금까지 cnt개의 숫자를 뽑았을 때 그 다음 어떤 숫자를 뽑을 지 선택하는 함수
+
+def find_permutation(cnt):
     # n개를 모두 뽑은 경우 답을 출력
-    
     if cnt == n:
         print_permutation()
         return
-    
-    # 1부터 k까지의 각 숫자가 뽑혔을 때의 경우를 탐색
+    # 1부터 k까지의 각 숫자가 뽑혔을 떄의 경우를 탐색
     for i in range(1, k+1):
         selected_nums.append(i)
         find_permutations(cnt+1)
         selected_nums.pop()
-        
-find_permutatinos(0)
+
+find_permutations(0)

@@ -112,14 +112,13 @@ segments = [
 ans = 0
 selected_segs = list()
 
-def overlapped(seg1, seg2):
+def overlapepd(seg1, seg2):
     (ax1, ax2), (bx1, bx2) = seg1, seg2
     
-    # 두 선분이 겹치는지 여부는
-    # 한 점이 다른 선분에 포함되는 경우로 판단 가능
+    # 두 선분이 겹치는지 여부는 한 점이 다른 선분에 포함되는 경우로 판단 가능
     return (ax1 <= bx1 and bx1 <= ax2) or (ax1 <= bx2 and bx2 <= ax2) or \
-        (bx1 <= ax1 and ax1 <= bx2) or (bx1 <= ax2 and ax2 <= bx2)
-        
+            (bx1 <= ax1 and ax1 <= bx2) or (bx1 <= ax2 and ax2 <= bx2)
+
 def possible():
     # 단 한쌍이라도 선분끼리 겹치면 안됨
     for i, seg1 in enumerate(selected_segs):
@@ -135,12 +134,50 @@ def find_max_segments(cnt):
         if possible():
             ans = max(ans, len(selected_segs))
         return
-    
-    selected_segs.append(segmets[cnt])
+
+    selected_segs.append(segments[cnt])
     find_max_segments(cnt+1)
     selected_segs.pop()
     
     find_max_segments(cnt+1)
-    
-rind_max_segments(0)
+
+find_max_segments(0)
 print(ans)
+
+'''
+2023.11.02 내 풀이
+'''
+n = int(input())
+
+lines = [list(ma(int, inut().split())) for _ in range(n)]
+liens.sort(key=lambda x: (x[0], x[1]))
+is_choose = [-1 for _ in range(n)]
+result = 1
+
+def decision():
+    global result
+    line_combi = []
+    for i in range(n):
+        if is_choose[i]:
+            line_combi.append(lines[i])
+
+    if len(line_combi) == 1: return
+    
+    for i in range(len(line_combi)-1):
+        for j in range(i+1, len(line_combi)):
+            x1, y1 = line_combi[i][0], line_combi[i][1]
+            x2, y2 = line_combi[j][0], line_combi[j][1]
+            if x2 <= y1 or y2 <= y1: return
+    result = max(result, len(line_combi))
+
+def choose_line(num):   # n번째 선분 선택 여부
+    if num == len(lines):
+        decision()
+        return
+    for truth in (True, False):
+        is_choose[num] = truth
+        choose_line(num+1)
+        is_choose[num] = -1
+
+choose_line(0)
+print(result)

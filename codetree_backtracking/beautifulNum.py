@@ -70,7 +70,7 @@ def verity_beautiful(): # 현재 N자리 수가 아름다운 수인지 확인하
             if number[idx] != number[j]:
                 return False
         idx += number[idx]
-    return False
+    return True
         
 def make_beautiful(num): # 아름다운 수의 number 자리수를 만드는 함수
     global result
@@ -87,3 +87,61 @@ def make_beautiful(num): # 아름다운 수의 number 자리수를 만드는 함
 
 make_beautiful(1)
 print(result)
+
+'''
+2023.11.02
+답을 맞췄으나 코드가 너무 비효율적
+'''
+n = int(input())
+a = []
+ans = 0
+def verify_beauty():    # N자리 숫자가 아름다운 수인지 확인하는 함수
+    global ans
+    cnt2, cnt3, cnt4 = 0,0,0
+    for number in a:
+        if number == 1:
+            if cnt2 % 2 != 0:
+                return
+            if cnt3 %3 != 0:
+                return
+            if cnt4%4 != 0:
+                return
+        elif number == 2:
+            cnt2 += 1
+            if cnt3 %3 != 0:
+                return
+            if cnt4%4 != 0:
+                return
+            
+        elif number == 3:
+            cnt3 += 1
+            if cnt2 %2 != 0:
+                return
+            if cnt4%4 != 0:
+                return
+        else:
+            cnt4 += 1
+            if cnt2 %2 != 0:
+                return
+            if cnt3 %3 != 0:
+                return
+
+    if cnt2%2 != 0 or cnt3 %3 != 0 or cnt4%4 != 0: return
+
+    ans += 1
+
+def make_beauty(num):   # num번째 숫자를 만드는 함수
+    if num == n:
+        verify_beauty()
+        return
+    
+    for i in range(1,5):
+        a.append(i)
+        make_beauty(num+1)
+        a.pop()
+
+
+make_beauty(0)
+print(ans)
+
+
