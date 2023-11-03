@@ -253,3 +253,56 @@ for _ in range(k):
 
 final_x, final_y = curr_cell
 print(final_x+1, final_y+1)
+
+'''
+2023.10.20
+'''
+# 내 풀이
+from collections import deque
+n, k = map(int, input().split())
+maze = [list(map(int, input().split())) for _ in range(n)]
+visited = [
+    [False for _ in range(n)]
+    for _ in range(n)
+]
+
+r, c = map(int, input().split())
+r -= 1
+c -= 1
+q = deque()
+def in_range(x,y):
+    return 0 <= x and x < n and 0 <= y and y < n
+
+def can_go(x,y,value):
+    return in_range(x,y) and maze[x][y] < value and not visited[x][y]
+
+dirs = ((-1,0),(0,-1),(1,0),(0,1))
+def bfs(std_value):         # std_value보다 작은 곳으로만 탐색 가능
+    bestI, bestJ, maxValue = 101,101,0
+    while q:
+        cur = q.popleft()
+        for i in range(4):
+            nx, ny = cur[0] + dirs[i][0], cur[1] + dirs[i][1]
+            if can_go(nx,ny,std_value):   # 만약 이동할 수 있다면
+                visited[nx][ny] = True # 방문처리
+                q.append((nx,ny))
+                if maxValue < maze[nx][ny]: # 현재 가장 최대값이라면
+                    bestI, bestJ, maxValue = nx,ny,maze[nx][ny]
+                elif maxValue == maze[nx][ny] and ((bestI > nx) or (bestI == nx and bestJ > ny)):
+                    bestI, bestJ, maxValue = nx, ny, maze[nx][ny]
+    return (bestI, bestJ)
+
+for turn in range(1, k+1):
+    for i in range(n):
+        for j in range(n):
+            visited[i][j] = False       # 방문 배열 초기화
+
+    q.append((r,c))
+
+    visited[r][c] = True
+
+    a,b = bfs(maze[r][c])
+    if a == 101 and b == 101: break
+    r,c = a,b
+
+print(r+1, c+1)
