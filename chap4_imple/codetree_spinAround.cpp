@@ -34,7 +34,7 @@ int main(){
             dir = (dir+1)%4
         
         // 그 다음 위치로 이동한 다음 배열에 올바른 값을 채워넣음
-        curr_x = next_x; curr_y = next_y
+        curr_x = next_x; curr_y = next_y;
     }
 
     // 출력:

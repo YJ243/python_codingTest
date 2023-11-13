@@ -221,5 +221,5 @@ for _ in range(k):
     r, c = tuple(map(int, input().split()))
     s_pos.append((r-1, c-1))
     
-find_max(0,0)
+find_max(0,0)       # idx: 현재 고려중인 돌 인덱스: 0, 지금까지 선택한 돌 개수: 0
 print(ans)

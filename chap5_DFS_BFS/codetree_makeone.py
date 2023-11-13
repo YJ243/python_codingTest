@@ -50,3 +50,102 @@ def bfs():
 visited[N] = True   # 입력값 방문처리
 q.append((N,0))     # 입력값과 연산 수행횟수 큐에 넣기
 print(bfs())
+
+'''
+해설
+- 이제까지 BFS를 생각할 때는 위치를 노드, 간선은 인접한 칸으로 가는 선 이정도로 생각했음
+- 이 문제에서는 각 숫자들이 노드, 연산이 간선으로 간주하여 그래프를 그릴 수 있음
+    => 가중치가 전부 1인 그래프가 주어졌을 때 정점 n으로부터 정점 1까지의 최단거리를 구하는 문제=BFS
+- 정점을 1에서 2n-1번까지 사용해 최단거리를 구해야 함
+    => n보다 큰 값을 만든 다음 2/3으로 숫자를 나눠 1로 더 빨리 갈 수 있음
+    => -1 연산을 n-1번 반복하면 항상 1이 됨(답은 최대 n-1)
+    => n에 +1 연산을 n-1번 연산을 했을 때 = 2n-1이 됨, 이 최댓값까지만 정점을 만들어 최단거리를 구하면 됨
+- 시간복잡도 = 정점 총 2n-1, 각 정점 당 최대 4개의 정점 = O(2n-1*4)=o(n)
+'''
+
+from collections import deque
+import sys
+import enum
+
+OPERATOR_NUM = 4
+INT_MAX = sys.maxsize
+
+class OPERATOR(enum.Enum):
+    SUBTRACT = 0
+    ADD = 1
+    DIV2 = 2
+    DIV3 = 3
+
+n = int(input())
+ans = INT_MAX
+
+q = deque()
+visited = [False for _ in range(2*n)]
+
+# step[i]: 정점 n에서 시작해서 정점 i 지점에 도달하기 위한 최단거리를 기록
+step = [0 for _ in range(2*n)]
+
+# num 값에 해당 operator를 사용할 수 있는지 판단
+# 2로 나누거나 3으로 나누려는 경우 num이 해당 값으로 나누어 떨어질 때만
+# 해당 연산을 사용 가능
+def possible(num, op):
+    if op == OPERATOR.SUBTRACT.value or op == OPERATOR.ADD.value:
+        return True
+    elif op == OPERATOR.DIV2.value:
+        return num % 2 == 0
+    else:
+        return num % 3 == 0
+
+# num에 op연산을 수행했을 때의 결과를 반환
+def calculate(num, op):
+    if op == OPERATOR.SUBTRACT.value:
+        return num - 1
+    elif op == OPERATOR.ADD.value:
+        return num + 1
+    elif op == OPERATOR.DIV2.value:
+        return num // 2
+    else:
+        return num // 3
+
+# 1에서 2n-1사이의 숫자만 이용해도 올바른 답을 구할 수 있으므로
+# 그 범위 안에 들어오는 숫자인지 확인
+def in_range(num):
+    return 1 <= num and num <= 2*n-1
+
+# 1에서 2n-1사이의 숫자이면서 아직 방문한 적이 없다면 가야함
+def can_go(num):
+    return in_range(num) and not visited[num]
+
+# queue에 새로운 위치를 추가하고 방문 여부를 표시
+def push(num, new_step):
+    q.append(num)
+    visited[num] = True
+    step[num] = new_step
+
+# BFS를 통해 최소 연산 횟수를 구하기
+def find_min():
+    global ans
+    
+    # queue에 남은 것이 없을 때까지 반복
+    while q:
+        # queue에서 가장 먼저 들어온 원소를 빼기
+        curr_num = q.popleft()
+        
+        # queue에서 뺸 원소의 위치를 기준으로 4가지 연산을 적용
+        for i in range(OPERATOR_NUM):
+            # 연산을 적용할 수 없는 경우라면 패스
+            if not possible(curr_num, i):
+                continue
+            new_num = calculate(curr_num, i)
+            # 아직 방문한 적이 없으면서 갈 수 있는 곳이라면 새로 queue에 넣어줌
+            if can_go(new_num):
+                # 최단 거리는 이전 최단거리에 1이 증가
+                push(new_num, step[curr_num] + 1)
+        
+        # 1번 정점까지 가는 데 필요한 최소 연산 횟수를 답으로 기록
+        ans = step[1]
+
+# BFS를 통해 최소 연산 횟수를 구하기
+push(n,0)
+find_min()
+print(ans)
