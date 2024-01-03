@@ -38,7 +38,7 @@ int main(){
 
             for(int k=0; k<DIR_NUM; k++){
                 int curt = 1;
-                int curx = i, cur_y = j;
+                int curx = i, cury = j;
                 while(true){
                     int nx = curx + dx[k];
                     int ny = cury + dy[k];

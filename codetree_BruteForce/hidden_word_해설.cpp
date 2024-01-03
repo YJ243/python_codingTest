@@ -1,6 +1,8 @@
 /*
  * 2023.11.14
  * https://www.codetree.ai/missions/5/problems/find-hidden-words-2?&utm_source=clipboard&utm_medium=text 
+ * 모든 칸에 대해서 해당 칸이 'L'이라면 해당 칸 주변의 가로, 세로, 대각선으로 인접한 8칸에 대해 환탐 진행 
+
 */
 
 #include <iostream>
