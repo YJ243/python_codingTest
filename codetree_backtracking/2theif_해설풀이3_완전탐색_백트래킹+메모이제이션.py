@@ -1,9 +1,13 @@
 '''
 2024.2.2
-- 미리 모든 위치 (sx, sy)에 한해 (sx, sy) ~ (sx, sy+m-1)에서 물건을 훔친다고 했을 떄
-- 그때의 최대 가치를 미리 구해놓으면 (preprocessing), 완탐시 백트래킹을 더 돌리지 않아도 되니
-- 중복으로 계산이 일어나던 과정 줄일 수 있음
-- 시간복잡도: O(N^2*(2^M) + N^4)
+-FindMax 함수에 동일한 (sx, sy)값이 넘어왔을 때 다시 계산하지 않음
+-이미 caching 되어 있던 값을 반환해주는 Memoization으로 최적화
+
+-즉 또 다시 (sx, sy)부터 (sx, sy+m-1)까지 중 최적의 가치를 찾아달라는 요청이 올 경우
+-이전에 계산해놨던 값을 반환해주는 식으로 최적화
+-이게 메모이제이션, 보통 배열을 하나 잡아 초기값으로 절대 답이 될 수 없는 값을 넣어놓고(여기서는 -1)
+-처음 게산이 이루어지면 그 결과를 배열에 저장해놓고, 나중에 동일한 요청이 들어왔을 때 배열에 있는 값을 바로 반환
+-시간복잡도는 풀이2와 같음 
 '''
 # 변수 선언 및 입력
 n, m, c = tuple(map(int, input().split()))     # n: 격자 크기, m: 연속한 열, c: 물건들의 합
@@ -12,10 +16,11 @@ weight = [
     for _ in range(n)
 ]
 
-# best_val[sx][sy]: (sx, sy) ~ (sx, sy + m-1)까지 물건을 잘 골라 얻을 수 있는 최대 가치를
-# preprocessing때 저장해놓을 배열
+# best_val[sx][sy]: (sx, sy) ~ (sx, sy + m-1)까지 
+# 물건을 잘 골라 얻을 수 있는 최대 가치를 이미 계산한 적이 있다면 그 값을 적어놓고
+# 아직 계산해본 적이 없다면 -1이 들어있음
 best_val = [
-    [0 for _ in range(n)]
+    [-1 for _ in range(n)]
     for _ in range(n)
 ]
 
@@ -44,6 +49,11 @@ def find_max_sum(curr_idx, curr_weight, curr_val):
 def find_max(sx, sy):   
     global a, max_val
     
+    # 이미 (sx, sy) ~ (sx, sy+m-1) 사이의 최적 조합을 계산해본 적이 있다는 뜻
+    # 그 값을 바로 반환
+    if best_val[sx][sy] != -1:
+        return best_val[sx][sy]
+    
     # 문제를 a[0] ~ a[m-1]까지 m개의 숫자가 주어졌을 때
     # 적절하게 골라 무게의 합이 c를 넘지 않게 하면서 얻을 수 있는 최대 가치를 
     # 구하는 문제로 바꾸기 위해 a 배열을 적절하게 채워넣음
@@ -52,6 +62,10 @@ def find_max(sx, sy):
     # 2^m개의 조합에 대해 최적의 값을 구하기
     max_val = 0
     find_max_sum(0,0,0)
+
+    # 나중에 또 (sx, sy) ~ (sx, sy+m-1) 사이의 조합을
+    # 계산하려는 시도가 있을 수 있으므로 best_Val 배열에 caching 해놓기
+    best_val[sx][sy] = max_val
     return max_val
 
 # [a,b], [c,d] 이 두 선분이 겹치는지 판단
@@ -88,7 +102,7 @@ for sx in range(n):
 # 두 번째 도둑은 (sx2, sy2) ~ (sx2, sy2 + m-1) 가지의 물건을 훔친다고 했을 때
 # 가능한 모든 위치를 탐색
 ans = max([
-    best_val[sx1][sy1] + best_val[sx2][sy2]
+    find_max(sx1, sy1) + find_max(sx2, sy2)
     for sx1 in range(n)
     for sy1 in range(n)
     for sx2 in range(n)
