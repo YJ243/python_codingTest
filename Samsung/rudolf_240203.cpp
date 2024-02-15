@@ -252,7 +252,7 @@ void Simulate(int turn){            // turn번째 턴 게임 시작
     /*
     for(int i=1; i<=p; i++){
         cout << faint[i] << ' ';
-    }
+   }
     cout << '\n';
     */
 }

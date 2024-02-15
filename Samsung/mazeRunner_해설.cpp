@@ -96,14 +96,14 @@ void subRotate(int x, int y, int d){ // (x,y)에서 시작해서 한 변의 길�
     // 회전해야 하는 부분을 a[1][1]부터 시작하도록 옮기기
     for(int i=x; i<=x+d; i++){
         for(int j=y; j<=y+d; j++){
-            a[1+i-x][1+i-y] = maze[i][j];
+            a[1+i-x][1+j-y] = maze[i][j];
         }
     }
     
     // a 배열을 90도 회전해서 b 배열에 저장하기
     int n = d+1; // 현재 옮겨야 하는 정사각형의 한 변의 격자 개수
     for(int i=1; i<=n; i++){
-        for(int j=1; j<=N; j++){
+        for(int j=1; j<=n; j++){
             if(-9 <= a[i][j] && a[i][j] <= -1) { // 벽이 회전한다면, 내구도 변화
                 a[i][j]++;
             }
@@ -141,7 +141,7 @@ void rotate(){ // 출구와 참가자를 포함한 회전
             // (i,j) := 이번에 결정한 정사각형의 좌상단 좌표
             // 행 := i ~ i + minDist
             // 열 := j ~ j + minDist
-            bool flagExit = flase, flagPerson = false;
+            bool flagExit = false, flagPerson = false;
             for(int r=i; r<=i+minDist; r++){
                 for(int c=j; c<=j+minDist; c++){
                     if(maze[r][c] == -10) flagExit = true;
