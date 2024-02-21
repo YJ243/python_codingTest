@@ -48,7 +48,7 @@ void Grow_Tree(int x, int y){  // (x,y)에 있는 나무 번식 진행
         if(IsTree(nx, ny))
             adjacent_tree++;
     }
-    temp[x][y] += adjacent_tree;
+    grid[x][y] += adjacent_tree;
 
 }
 
@@ -149,8 +149,6 @@ void Spray_Herbicide(pair<int, int> tgt, int cur_year){       // tgt를 중심�
 
 void Simulate(int cur_year){
     // Step 1. 각 나무가 인접한 나무 수만큼 성장하기
-    // 1-1. 먼저 temp 배열 초기
-    Initialize_Temp();
     for(int i=0; i<n; i++){
         for(int j=0; j<n; j++){
             if(grid[i][j] > 0){     // 만약 나무가 있다면
@@ -159,8 +157,10 @@ void Simulate(int cur_year){
             }
         }
     }
-    Copy_Temp_to_Grid();        // 원래 격자로 넣기
+    
     // Step 2. 인접한 4개 칸에 번식하기
+    // 2-1. 먼저 temp 배열 초기화
+    Initialize_Temp();
     for(int i=0; i<n; i++){
         for(int j=0; j<n; j++){
             if(grid[i][j] > 0){     // 나무가 있다면
