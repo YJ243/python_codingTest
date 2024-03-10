@@ -2,141 +2,133 @@
  * 24.02.23
  * 청소는 즐거워
  * 내 풀이
- * 맨 처음에 비율을 나타내는 격자도 회전하는지 모르고 풀어서 디버깅할 때 다시 짜느라 시간이 더 걸렸음
+ * 각 방향에 대해 
+ * 각 칸에 대해 5*5 격자를 보게 되므로 총 시간복잡도는 O(N^2)가 된다.
 */
 
 #include <iostream>
+
+#define DIR_NUM 4
 #define MAX_N 499
+
 using namespace std;
 
-int n;                      // 격자 크기
-int grid[MAX_N][MAX_N];     // 격자
-double gridR[5][5];
-int dirs[4][2] = {{0,-1},{1,0},{0,1},{-1,0}};   // 좌, 하, 우, 상
-int r, c;                   // 빗자루의 현재 위치
-int OutDust;                // 격자 밖으로 떨어져 나간 먼지 양
-int curD;                   // 현재 빗자루가 움직이는 방향
-int curL=1;                 // 현재 빗자루가 움직이는 방향으로 이동해야 할 횟수
-int totalSpread;
+// 전역 변수 선언:
+int n;
 
-void Init(){
-    cin >> n;
-    for(int i=0; i<n; i++)
-        for(int j=0; j<n; j++)
-            cin >> grid[i][j];
+int curr_x, curr_y;
+int move_dir, move_num;
 
-    gridR[0][2] = gridR[4][2] = 0.02;
+int ans;
 
-    gridR[1][1] = gridR[3][1] = 0.1;
-    gridR[1][2] = gridR[3][2] = 0.07;
-    gridR[1][3] = gridR[3][3] = 0.01;
+int grid[MAX_N][MAX_N];
 
-    gridR[2][0] = 0.05;
-    gridR[2][1] = 100.0;
-
-
-}
-
-bool InRange(int x, int y){
+int dust_ratio[DIR_NUM][5][5] = {
+    {
+        {0,  0, 2, 0, 0},
+        {0, 10, 7, 1, 0},
+        {5,  0, 0, 0, 0},
+        {0, 10, 7, 1, 0},
+        {0,  0, 2, 0, 0},
+    },
+    {
+        {0,  0, 0,  0, 0},
+        {0,  1, 0,  1, 0},
+        {2,  7, 0,  7, 2},
+        {0, 10, 0, 10, 0},
+        {0,  0, 5,  0, 0},
+    },
+    {
+        {0, 0, 2,  0, 0},
+        {0, 1, 7, 10, 0},
+        {0, 0, 0,  0, 5},
+        {0, 1, 7, 10, 0},
+        {0, 0, 2,  0, 0},
+    },
+    {
+        {0,  0, 5,  0, 0},
+        {0, 10, 0, 10, 0},
+        {2,  7, 0,  7, 2},
+        {0,  1, 0,  1, 0},
+        {0,  0, 0,  0, 0},
+    }
+};
+bool InRange(int x, int y) {
     return 0 <= x && x < n && 0 <= y && y < n;
 }
 
-void Spread_Dust(int x, int y, int originDust, double ratio){
-    int curSpreadCnt = originDust * ratio;
-    //cout << curSpreadCnt<<"만큼 퍼져나감" << '\n';
-    totalSpread += curSpreadCnt;            // 현재 퍼져나간 먼지 수 증가시키기
-    if(!InRange(x, y)){
-        // 만약 격자 밖으로 나갔다면
-        OutDust += curSpreadCnt;            // 빠져나간 먼지수에 추가
-    }
-    else{
-        // 격자 안에 있다면
-        grid[x][y] += curSpreadCnt;         // 격자에 표시
+// (x,y) 위치에 dust만큼의 먼지를 추가한다.
+void AddDust(int x, int y, int dust){
+    // 격자 범위를 벗어난다면 답에 더해준다
+    if(!InRange(x, y))
+        ans += dust;
+    // 격자 범위 안이라면, 해당 칸에 더해준다.
+    else
+    {
+        grid[x][y] += dust;
     }
 }
 
-void MoveBloom(int x, int y){   // (x,y) 위치로 빗자루를 이동시키기
-    int curDustCnt = grid[x][y];    // 현재 먼지
-    //cout << x << ' ' << y << "위치로 이동:" << curDustCnt <<'\n';
-    totalSpread = 0;            // 전체 퍼져나간 먼지
-    int aX, aY;
-    for(int i=0; i<5; i++){
-        for(int j=0; j<5; j++){
-            if(gridR[i][j] == 0) continue;
-            if(gridR[i][j] == 100.0){
-                aX = i, aY = j;
-            }
-            // 만약 퍼센트라면
-            int dx = i-2, dy = j-2;
-            // 빗자루 옆에 확인하기
-            Spread_Dust(x+dx, y+dy, curDustCnt, gridR[i][j]);
-        }
-    }
+// 한 칸 움직이며 청소를 진행한다.
+void Move(){
+    // 문제에서 원하는 진행 순서대로 
+    // 왼쪽 아래 오른쪽 위 방향이 되도록 정의합니다.
+    int dx[DIR_NUM] = {0, 1, 0, -1};
+    int dy[DIR_NUM] = {-1, 0, 1, 0};
     
-    // a% 먼지 처리해주기
-    int aDust = curDustCnt - totalSpread;
-    if(!InRange(x+(aX-2), y+(aY-2))){
-        OutDust += aDust;
-    }
-    else{
-        grid[x+(aX-2)][y+(aY-2)] += aDust;
-    }
+    // curr 위치를 계산합니다.
+    curr_x += dx[move_dir]; curr_y += dy[move_dir];
 
-    grid[x][y] = 0;       // 먼지 없애기
+    // 현재 위치를 기준으로 각 위치에 먼지를 더해준다.
+    int added_dust = 0;
+    for(int i=0; i<5; i++)
+        for(int j=0; j<5; j++){
+            int dust = grid[curr_x][curr_y]*dust_ratio[move_dir][i][j] / 100;
+            AddDust(curr_x+i-2, curr_y + j-2, dust);
 
+            added_dust += dust;
+        }
+    
+    // a% 자리에 먼지를 추가한다.
+    AddDust(curr_x + dx[move_dir], curr_y + dy[move_dir], grid[curr_x][curr_y] - added_dust);
 }
 
-void RotateRatioGrid(){     // 반시계방향으로 ratio 배열을 회전하기
-    double tempR[5][5];
-
-    for(int i=0; i<5; i++){
-        for(int j=0; j<5; j++){
-            tempR[4-j][i] = gridR[i][j];
-        }
-    }
-
-    for(int i=0; i<5; i++){
-        for(int j=0; j<5; j++){
-            gridR[i][j] = tempR[i][j];
-        }
-    }
+bool End(){
+    return !curr_x && !curr_y;
 }
 
-void Simulate(){
-    bool IsFinish = false;
-    r = n/2, c = n/2;
-    // Step 1. 빗자루 한 칸 이동
-    while(true){
-        // 1-1. 먼저 curL만큼 curD 방향으로 이동하기
-        for(int l=1; l <= curL; l++){
-            int nr = r + dirs[curD][0], nc = c + dirs[curD][1];
-            if(!InRange(nr, nc)){   // 만약 다음 위치가 격자를 벗어난다면 이제 끝났다는 얘기
-                IsFinish = true;
+int main(){
+    // 입력:
+    cin >> n;
+
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j < n; j++)
+            cin >> grid[i][j];
+    
+    // 시작 위치와 방향, 
+    // 해당 방향으로 이동할 횟수를 설정합니다. 
+    curr_x = n / 2; curr_y = n / 2;
+    move_dir = 0; move_num = 1;
+
+    while(!End()){
+        // move_num만큼 이동한다.
+        for(int i=0; i<move_num; i++){
+            Move();
+
+            // 이동하는 도중 (0,0)으로 오게 되면, 움직이는 것을 종료하기
+            if(End())
                 break;
-            }
-            MoveBloom(nr, nc);
-            
-            r = nr, c = nc;
-
         }
-        if(IsFinish)
-            break;
 
-        // 이제 방향을 바꾸어 주어야 함
-        curD = (curD + 1) % 4;
-        RotateRatioGrid();
-        if(curD % 2 == 0) curL++;       // 만약 좌우로 움직이는 방향에 왔다면 길이 증가
-
+        // 방향을 바꾼다.
+        move_dir = (move_dir+1) % 4;
+        // 만약 현재 방향이 왼쪽 혹은 오른쪽이 된 경우 특정 방향으로 움직여야 할 횟수를 1 증가시키기
+        if(move_dir == 0 || move_dir == 2)
+            move_num++;
     }
-}
-
-int main() {
-    // 수행을 위한 입력 및 초기화 진행:
-    Init();    
-    // 시뮬레이션 진행
-    Simulate();
-    // 출력하기:
     
-    cout << OutDust;
+    // 출력:
+    cout << ans;
+
     return 0;
 }

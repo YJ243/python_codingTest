@@ -14,10 +14,10 @@ int grid[MAX_N][MAX_N];     // 격자
 double gridR[5][5];
 int dirs[4][2] = {{0,-1},{1,0},{0,1},{-1,0}};   // 좌, 하, 우, 상
 int r, c;                   // 빗자루의 현재 위치
-int OutDust;                // 격자 밖으로 떨어져 나간 먼지 양
+int OutDust;                // 정답으로 출력할 변수: 격자 밖으로 떨어져 나간 먼지 양
 int curD;                   // 현재 빗자루가 움직이는 방향
 int curL=1;                 // 현재 빗자루가 움직이는 방향으로 이동해야 할 횟수
-int totalSpread;
+int totalSpread;            // 현재 움직임에서 퍼져나간 먼지 양
 
 void Init(){
     cin >> n;
