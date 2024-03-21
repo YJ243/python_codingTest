@@ -1,13 +1,13 @@
 /*
  * 2024.3.22 
- * 첫번째 도둑은 같은 위치에 대해 두번째 도둑이 다 backtracking을 돌 동안 계속해서 다시 돌게 됨
- * 완탐 이전에 미리 모든 각각의 (sx, sy) ~ (sx, sy+m-1)경우에 대해 backtracking을 돌려서
- * 해당 구간 내에서 최적의 가치를 구해 그 값을 배열에 저장해놓는 preprocessing을 적용
- * 그럼 이후에 brute force search시 그 값을 그대로 이용하여 중복 계산을 없앨 수 있음
- * 시간복잡도: 처음 각각의 위치 (sx, sy)에 대해 backtracking을 돌리는데 n^2*(2^m),
- *            이후 brute force 하는데 backtracking 없이 위치를 고르기만 하면 되므로 n^4
-              O(N^2*(2^M)+N^4)
-              
+ * Brute Force Search + Backtracking + Memoization
+ * 풀이 1에서의 비효율은 FindMax 함수에 동일한 (sx, sy) 값이 넘어왔기 때문이다
+ * 따라서 또 다시 (sx, sy) ~ (sx, sy + m-1)까지 중 최적의 가치를 찾아달라는 요청이 올 경우
+ * 이전에 계산해놨던 값을 반환해주는 식으로 최적화 가능
+ * 이를 Memoization
+ * 시간복잡도: 각각 (sx, sy) 상태에 대해 단 한 번의 backtracking 연산만 이루어지므로
+ * 모든 (sx, sy)에 대해 backtracking을 돌리는데 n^2*(2^m), brute force에 n^4
+ * 총 시간복잡도는 O(N^2 * (2^M) + N^4)가 된다.
 */
 #include <iostream>
 #include <algorithm>
@@ -21,7 +21,9 @@ using namespace std;
 int n, m, c;
 int weight[MAX_N][MAX_N];
 // best_val[sx][sy] : (sx, sy) ~ (sx, sy+m-1) 까지 물건을
-//                     잘 골라 얻을 수 있는 최대 가치를 전처리 때 저장해놓을 배열
+//                     잘 골라 얻을 수 있는 최대 가치를 
+//                     이미 계산한 적이 있다면 그 값을 적어놓고
+//                     아직 계산해본 적이 없다면 -1이 들어있다.
 int best_val[MAX_N][MAX_N];
 
 int a[MAX_M];
@@ -50,6 +52,11 @@ void FindMaxSum(int curr_idx, int curr_weight, int curr_val) {
 // (sx, sy) ~ (sx, sy + m - 1) 까지의 숫자들 중 적절하게 골라
 // 무게의 합이 c를 넘지 않게 하면서 얻을 수 있는 최대 가치를 반환합니다.
 int FindMax(int sx, int sy) {
+    // 이미 (sx, sy) ~ (sx, sy + m-1) 사이의 최적 조합을
+    // 계산해본 적이 있다는 뜻이므로, 그 값을 바로 반환한다.
+    if(best_val[sx][sy] != -1)
+        return best_val[sx][sy];
+        
     // 문제를 a[0] ~ a[m - 1]까지 m개의 숫자가 주어졌을 때
     // 적절하게 골라 무게의 합이 c를 넘지 않게 하면서 얻을 수 있는 
 	// 최대 가치를 구하는 문제로 바꾸기 위해
@@ -60,6 +67,10 @@ int FindMax(int sx, int sy) {
     // 2^m개의 조합에 대해 최적의 값을 구합니다.
     max_val = 0;
     FindMaxSum(0, 0, 0);
+
+    // 나중에 또 (sx, sy) ~ (sx, sy+m-1) 사이의 조합을
+    // 계산하려는 시도가 있을 수 있으므로 best_val 배열에 caching 해놓는다.
+    best_val[sx][sy] = max_val;
     return max_val;
 }
 
@@ -98,12 +109,11 @@ int main(){
         for(int j=0; j<n; j++)
             cin >> weight[i][j];
     
-    // preprocessing 과정이다.
-    // 미리 각각의 위치에 대해 최적의 가치를 구해 best_val 배열에 저장해놓는다.
+    // 아직 (sx, sy) - (sx, sy + m -1) 부분은 계산해본 적이 없다는 
+	// 표시로 절대 best_val이 될 수 없는 -1을 초기값으로 넣어놓습니다.
     for(int sx = 0; sx < n; sx++)
-        for(int sy=0; sy<n; sy++)
-            if(sy + m-1 < n)    // 만약 도둑이 훔치려는 물건의 범위가 격자 내에 있다면
-                best_val[sx][sy] = FindMax(sx, sy);
+        for(int sy = 0; sy < n; sy++)
+            best_val[sx][sy] = -1;
     
     // 첫 번째 도둑은 (sx1, sy1) ~ (sx1, sy1+m-1) 까지 물건을 훔치려 하고
     // 두 번째 도둑은 (sx2, sy2) ~ (sx2, sy2 + m-1) 까지의 물건을 훔치려 한다고 했을 때
