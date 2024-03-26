@@ -1,9 +1,10 @@
 /*
  * 해설
+ * 24.03.22
  * 1. Backtracking으로 'a'부터 'f'까지 각 알파벳에 대응되는 숫자를 1-4중 하나 고르기
  * 2. 그 이후 식을 왼쪽에서 오른쪽 방향으로 순서대로 읽으면서 값 계산
  * 3. 그 중 가능한 값 중 최댓값 고르기 
- * 시간복잡도: O(4^N * L): N은 6, L은 문자열 길이 * 2024.02.23
+ * 시간복잡도: O(4^N * L): N은 6, L은 문자열 길이
 */
 
 #include <iostream>
@@ -16,11 +17,12 @@
 using namespace std;
 
 int n = 6;
+
 string expression;
 int num[MAX_N];
 int ans = INT_MIN;
 
-int Conv(int idx){
+int Conv(int idx){      // convert
     return num[expression[idx] - 'a'];
 }
 
