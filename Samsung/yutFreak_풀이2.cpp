@@ -9,7 +9,7 @@
 
 #define MAX_TURN 10
 #define PIECE_CNT 4
-#define BOARD_WIDTH 45
+#define BOARD_WIDTH 40
 #define START 0
 #define END 20
 using namespace std;
@@ -23,7 +23,6 @@ int board[BOARD_WIDTH] = {
     13, 16, 19, 0, 0,
     22, 24, 0, 0, 0,
     28, 27, 26, 0, 0,
-    0, 0, 0, 0, 0,
     25, 30, 35, 40
 };
 
@@ -39,10 +38,10 @@ int GetLoc(int idx, int cnt){   // idx번에서 cnt만큼 이동했을 때 도�
     
     int next_idx = idx+1;   // 한칸 이동
     if(idx == 23 || idx == 27 || idx == 33)
-        next_idx = 41;
+        next_idx = 36;
     else if(idx == 19)
-        next_idx = 44;
-    else if(idx == 44)
+        next_idx = 39;
+    else if(idx == 39)
         next_idx = END;
     return GetLoc(next_idx, cnt-1);
 }
