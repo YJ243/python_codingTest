@@ -33,7 +33,7 @@ void Input(){
     }
 }
 
-bool IsFinish(){
+bool IsFinish(){    // 종료 조건을 만족했다면 true 리턴
     int cnt = 0;
     for(int i=0; i<N; i++){
         for(int j=0; j<M; j++){
@@ -41,22 +41,20 @@ bool IsFinish(){
                 cnt++;
         }
     }
-    if(cnt == 1){
-        return true;
-    }
-    else
-        return false;
+    return cnt == 1;    // 부서지지 않은 포탑(살아남은 포탑)이 1개가 되면 즉시 중지 
 }
 
 void FindAttacker(){        // 공격자를 찾는 함수
     // 공격자의 공격력, 공격 시간, 좌표
     int minPower = INT_MAX, maxTime = -1, maxI = -1, maxJ = -1;     
-    for(int sum = N+M-2; sum >= 0; sum--){
-        for(int j = M-1; j >= 0; j--){
-            int i = sum-j;
-            if(i < 0 || i >= N) continue;
-            if(power[i][j] == 0) continue;
+    for(int sum = N+M-2; sum >= 0; sum--){      // sum(행+열)을 최대부터 최소까지 순회
+        for(int j = M-1; j >= 0; j--){      // 같은 sum에 대해서는 높은 열부터 탐색
+            int i = sum-j;      // 행은 합에서 열을 빼기
+            // 현재 보고 있는 좌표: i행 j열
+            if(i < 0 || i >= N) continue;       // 격자를 벗어나는 위치는 무시하기
+            if(power[i][j] == 0) continue;      // 부서진 포탑이면 무시하기
             if(make_pair(minPower, -maxTime) > make_pair(power[i][j], -attack_time[i][j])){
+                // 공격력, 마지막 공격시간 비교해서 저장하기
                 minPower = power[i][j], maxTime = attack_time[i][j], maxI = i, maxJ = j;
             }
         }
@@ -68,9 +66,9 @@ void FindAttacker(){        // 공격자를 찾는 함수
 void FindTarget(){          // 공격 대상을 찾는 함수
     // 공격대상의 공격력, 공격 시간, 좌표
     int maxPower = INT_MIN, minTime = INT_MAX, minI = INT_MAX, minJ = INT_MAX;     
-    for(int sum = 0; sum < N+M-1; sum++){
-        for(int j = 0; j < M; j++){
-            int i = sum-j;
+    for(int sum = 0; sum < N+M-1; sum++){   // 거꾸로, 행과 열의 합이 가장 작은 포탑부터
+        for(int j = 0; j < M; j++){         // 열이 가장 작은 포탑부터
+            int i = sum-j;                  // 행은 합에서 열을 빼기
             if(i < 0 || i >= N) continue;
             if(power[i][j] == 0) continue;
             if(make_pair(maxPower, -minTime) < make_pair(power[i][j], -attack_time[i][j])){
@@ -105,7 +103,7 @@ void bfs(){
             if(CanGo(nx, ny)){
                 visited[nx][ny] = true;
                 q.push(make_pair(nx, ny));
-                from[nx][ny] = make_pair(cx, cy);
+                from[nx][ny] = make_pair(cx, cy);   // 어디로부터 왔는지 기록하기, 이 한줄만 추가하면 역추적 가능
             }
         }
     }
@@ -121,10 +119,13 @@ void DoLaser(){     // 실제로 공격자에서 공격대상으로 레이저 �
     int tX = target.first, tY = target.second;          // 공격 대상 좌표
 
     while(tX != aX || tY != aY){
+        // power 공력력 정하기
         int p = power[aX][aY] / 2;          // 공격력 절반
         if(make_pair(tX, tY) == target)     // 만약 공격대상이면 공격자의 공격력만큼 피해 입히기
             p = power[aX][aY];
+        // 공격하기
         PowerAttack(tX, tY, p);             // (tX, tY)에 p만큼 공격하기
+        // 역추적하기
         pair<int, int> next = from[tX][tY]; 
         tX = next.first, tY = next.second;  // 다음 좌표
     } 
@@ -147,14 +148,13 @@ bool tryLaser(){    // 공격자에서 공격대상까지 최단거리로 레이
     return true;
 }
 
-void DoBomb(){
+void DoBomb(){      // 포탄 공격하기
     int tX = target.first, tY = target.second;
     int p = power[attacker.first][attacker.second]/2;
     for(int d=0; d<8; d++){
         int nx = (tX + dirs[d][0] + N) % N, ny = (tY + dirs[d][1]+M)%M;
         if(power[nx][ny] != 0 && make_pair(nx, ny) != attacker){
             // 만약 공격할 수 있는 곳이라면
-            
             PowerAttack(nx, ny, p);
         }
     }
@@ -172,21 +172,24 @@ void Repair(){      // 부서지지 않은 포탑 중 공격과 무관했던 포
     }
 }
 
+// 시뮬레이션 -> 시키는 것 하기! (삼성은 순서를 알려줬기 때문에 그대로 하면 된다!!)
 void Simulate(int turn){
     // Step 1. 공격자 선정
     FindAttacker();
     // Step 2. 공격 대상 선정
     FindTarget();
-    // 공격자 핸디캡 적용하기
+    // Step 3. 공격자 핸디캡 적용하기
     power[attacker.first][attacker.second] += N+M;
     
-    // Step 3. 공격하기
+    // Step 4. 공격자에 대해 "마지막 공격 턴" 정보 갱신
     attack_time[attacker.first][attacker.second] = turn;    // 공격한 시점 표시하기
-    if(!tryLaser()){    // 만약 레이저 공격이 안된다면
-        DoBomb();       // 포탄 공격하기
+    
+    // Step 5. 공격 수행
+    if(!tryLaser()){    // 레이저 공격을 시도하기
+        DoBomb();       // 실패했다면포탄 공격하기
     }
 
-    // Step 4. 포탑 정비하기
+    // Step 6. 포탑 정비하기
     Repair();
     
 }
@@ -194,12 +197,14 @@ void Simulate(int turn){
 int main() {
     // 입력 받기:    
     Input();
+    // 시뮬레이션--> 시키는 것 하기! (삼성은 순서를 알려줬기 때문에 그대로 하면 된다!!)
     for(int i=1; i<=K; i++){     // K번의 턴 동안 공격 진행하기
-        if(IsFinish())      // 만약 부서지지 않은 포탑이 1개가 된다면
-            break;          // 그 즉시 중지하기
+        if(IsFinish())      // 만약 부서지지 않은 포탑이 1개가 된다면, 종료 조건을 만족했다면
+            break;          // 턴을 수행하지 않고 그 즉시 중지하기
         Simulate(i);         // 시뮬레이션 진행
     }
-    FindTarget();
+    FindTarget();           // 가장 강한 포탑 공격력 바당오기
     cout << power[target.first][target.second];
     return 0;
 }
+//=> 전체 시간복잡도: O(K*N*M)
