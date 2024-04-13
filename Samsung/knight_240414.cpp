@@ -1,3 +1,7 @@
+/*
+ * 24.04.14
+ * 기사들을 나타내는 map을 채울 때 탈락한 기사들도 채워버려서 틀림
+*/
 #include <iostream>
 #include <tuple>
 #include <queue>
